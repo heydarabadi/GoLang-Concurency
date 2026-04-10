@@ -1,93 +1,266 @@
-# GoLang-Concurency
+مسیر یادگیری (Learning Roadmap)
+بخش 0 — مقدمه و پیش‌نیازها
+قبل از ورود به مبحث concurrency باید بفهمیم چرا اصلاً به concurrency نیاز داریم و در چه مواقعی استفاده از آن منطقی است.
 
+موضوعات این بخش:
 
+چرا Concurrency مهم است؟
+تفاوت Concurrency و Parallelism
+مدل CSP در Go (Communicating Sequential Processes)
+مروری بر Runtime زبان Go
+آشنایی با Scheduler و مدل G-M-P
+چه زمانی نباید از Concurrency استفاده کرد
+سادگی در مقابل پیچیدگی
+بخش 1 — Goroutine و Channel
+این بخش پایه و اساس concurrency در Go است.
 
-## Getting started
+موضوعات این بخش:
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+Goroutine چیست
+هزینه و نحوه زمان‌بندی goroutineها
+Channel چیست
+تفاوت Buffered و Unbuffered Channel
+ارسال و دریافت داده
+بستن channel
+استفاده از range روی channel
+Channelهای جهت‌دار
+text
+chan<-   ارسال
+<-chan   دریافت
+الگوی Done Channel برای cancel ساده
+تمرین‌ها
+پیاده‌سازی Fan-out ساده با چند worker
+ساخت یک Pipeline سه مرحله‌ای
+تشخیص و رفع Deadlockهای رایج
+بخش 2 — Select و الگوهای کنترلی
+یکی از قدرتمندترین ابزارهای concurrency در Go دستور select است.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+موضوعات این بخش:
 
-## Add your files
+select غیرمسدودکننده
+استفاده از default
+timeout با time.After
+استفاده از select همراه با context
+الگوهای concurrency
+الگوها:
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+Fan-in
 
-```
-cd existing_repo
-git remote add origin https://gitlab.chabokan.net/heydarabadi/golang-concurency.git
-git branch -M main
-git push -uf origin main
-```
+Fan-out
 
-## Integrate with your tools
+Tee
 
-- [ ] [Set up project integrations](https://gitlab.chabokan.net/heydarabadi/golang-concurency/-/settings/integrations)
+Bridge
 
-## Collaborate with your team
+Multiplex
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+مدیریت Backpressure با buffer و select
 
-## Test and Deploy
+تمرین‌ها
+ترکیب چند stream داده در یک خروجی
+پیاده‌سازی Timeout و Retry
+بخش 3 — همزمانی با حافظه مشترک (sync)
+گاهی ارتباط از طریق channel کافی نیست و نیاز به دسترسی مشترک به حافظه داریم.
 
-Use the built-in continuous integration in GitLab.
+موضوعات این بخش:
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+sync.Mutex
+sync.RWMutex
+زمان استفاده از هرکدام
+sync.WaitGroup
+sync.Once
+sync.Cond
+sync.Map
+عملیات اتمیک (sync/atomic)
+عملیات CAS
+مدل حافظه در Go
+تمرین‌ها
+پیاده‌سازی یک Counter امن برای concurrent access
 
-***
+روش‌ها:
 
-# Editing this README
+با Mutex
+با RWMutex
+با Atomic
+سپس مقایسه performance.
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+تمرین دیگر:
 
-## Suggestions for a good README
+ساخت Cache همزمان و مقایسه:
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+RWMutex
+sync.Map
+بخش 4 — Context و Cancellation
+مدیریت cancellation در سیستم‌های concurrent بسیار مهم است.
 
-## Name
-Choose a self-explaining name for your project.
+موضوعات:
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+context.Background
+context.TODO
+context.WithCancel
+context.WithTimeout
+context.WithDeadline
+context.WithValue
+انتقال context بین APIها
+cancellation در pipelineها
+تمرین‌ها
+ساخت Web Crawler concurrent با امکان لغو
+انجام عملیات I/O با timeout
+بخش 5 — الگوهای طراحی Concurrency
+الگوهایی که در سیستم‌های واقعی استفاده می‌شوند.
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+موضوعات:
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+Worker Pool پیشرفته
+تنظیم تعداد workerها
+صف کار
+Backpressure
+Bounded Parallelism (الگوی semaphore)
+Rate Limiting
+الگوریتم Token Bucket
+Pipelineهای قابل ترکیب
+Futures/Promises در Go
+سیستم Pub/Sub ساده
+تمرین‌ها
+اجرای N job با حداکثر M worker
+پیاده‌سازی Token Bucket Rate Limiter
+بخش 6 — مدیریت خطا و خاتمه امن
+موضوعات:
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+انتقال خطا در pipelineها
+error wrapping (errors.Is و errors.As)
+جلوگیری از Goroutine Leak
+آزادسازی منابع با defer
+استفاده از errgroup
+تمرین
+اجرای چند goroutine که با اولین خطا همه cancel شوند.
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+بخش 7 — Scheduler و Performance
+برای نوشتن سیستم‌های سریع باید بفهمیم runtime چگونه کار می‌کند.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+موضوعات:
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+GOMAXPROCS
+Scheduler داخلی Go
+Work stealing
+Preemption
+Sysmon
+Netpoller
+تعامل GC با concurrency
+Allocation pressure
+False sharing
+Cache line alignment
+تمرین‌ها
+بنچمارک با GOMAXPROCS مختلف
+اندازه‌گیری Mutex contention
+بخش 8 — Profiling و Observability
+دیباگ برنامه‌های concurrent.
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+موضوعات:
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+CPU profiling
+Heap profiling
+Goroutine profiling
+Block profiling
+Mutex profiling
+Go Trace
+runtime metrics
+expvar
+Structured logging
+Correlation ID
+ابزارها:
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+text
+go tool pprof
+go tool trace
+net/http/pprof
+تمرین‌ها
+پیدا کردن goroutine leak
+تشخیص mutex contention
+بخش 9 — I/O همزمان و شبکه
+کار با concurrency در برنامه‌های شبکه‌ای.
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+موضوعات:
 
-## License
-For open source projects, say how it is licensed.
+HTTP server concurrent
+استفاده از context در handlerها
+تنظیمات HTTP Client
+Connection pooling
+WebSocket
+Backpressure
+فایل و دیسک
+تمرین‌ها
+ساخت Reverse Proxy ساده
+استریم فایل بزرگ با کنترل سرعت
+بخش 10 — ساختار داده و Concurrency
+موضوعات:
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Channel vs Mutex
+داده‌های immutable
+Copy-on-write
+Batched updates
+Ring buffer بدون lock
+Padding ساختارها برای جلوگیری از false sharing
+تمرین‌ها
+پیاده‌سازی Queue بدون lock
+ساخت Logger با batching
+بخش 11 — تست‌نویسی برای Concurrency
+تست برنامه‌های concurrent سخت است.
+
+موضوعات:
+
+Race detector
+text
+go test -race
+محدودیت‌های race detector
+تست‌های flaky
+تست deterministic
+Fake clock
+Fuzz testing
+تمرین‌ها
+تست Worker Pool
+پیدا کردن Data Race
+بخش 12 — الگوهای Production
+الگوهایی که در سیستم‌های واقعی استفاده می‌شوند.
+
+موضوعات:
+
+Graceful shutdown
+مدیریت signalها
+تخلیه workerها
+Health check
+Readiness probe
+Circuit breaker
+مدیریت queue
+محدودیت منابع در Kubernetes
+متریک‌های سیستم
+بخش 13 — کتابخانه‌های مفید
+کتابخانه‌هایی که در سیستم‌های concurrent زیاد استفاده می‌شوند.
+
+golang.org/x/sync
+
+errgroup
+semaphore
+singleflight
+golang.org/x/time/rate
+
+OpenTelemetry
+
+zap
+
+zerolog
+
+fasthttp
+
+تنظیمات connection pool در database/sql
+
+بخش 14 — Anti‑Patterns
+اشتباهات رایج در برنامه‌های concurrent.
+
+Goroutine leak
+استفاده اشتباه از buffered channel
+Deadlockهای پنهان
+shared mutable state
+استفاده زیاد از select default
+premature optimization
+panic در goroutine بدون recovery
