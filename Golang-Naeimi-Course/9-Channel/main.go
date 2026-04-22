@@ -156,7 +156,7 @@ func FanOutFanInChannel() {
 
 func worker(id int, jobs <-chan int, results chan<- int) {
 	for job := range jobs {
-		fmt.Printf("Worker With Id:%d Alredy Work In Job Number: %d \r\n", id, job)
+		fmt.Printf("Worker With Id:%d Already Work In Job Number: %d \r\n", id, job)
 		time.Sleep(1 * time.Second)
 		results <- job * 2
 	}
@@ -524,7 +524,7 @@ func MessageBrokerExample() {
 	//topics := []string{"news", "sports", "weather"}
 
 	// مشترک‌ها
-	alice := broker.Subscribe("news", "alice")
+	alice := broker.Subscribe("news", "Alice")
 	bob := broker.Subscribe("news", "bob")
 	charlie := broker.Subscribe("sports", "charlie")
 
@@ -562,7 +562,7 @@ func MessageBrokerExample() {
 	time.Sleep(2 * time.Second)
 
 	// لغو اشتراک
-	broker.Unsubscribe("news", "alice")
+	broker.Unsubscribe("news", "Alice")
 
 	// انتشار پیام بعد از لغو اشتراک
 	broker.Publish("news", Message{ID: "5", Body: "خبر: فقط باب این رو میگیره"})
