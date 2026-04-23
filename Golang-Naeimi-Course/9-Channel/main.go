@@ -19,8 +19,11 @@ func main() {
 	//FanOutFanInChannel()
 	//PipeLine()
 	//InventorySystemForLockWithChannels()
+	//TimeoutAndCancellation()
+	//TimeoutAndCancellation()
+	//RangeInChannelExample()
+	DoneChannel()
 
-	TimeoutAndCancellation()
 }
 
 func SimpleUnbufferedChannel1() {
@@ -608,4 +611,41 @@ func AdvancedBrokerExample() {
 
 	time.Sleep(5 * time.Second)
 	fmt.Println("✅ برنامه تمام شد")
+}
+
+func RangeInChannelExample() {
+	queue := make(chan string, 3)
+	queue <- "1"
+	queue <- "2"
+	queue <- "3"
+
+	close(queue)
+
+	for value := range queue {
+		fmt.Println(value)
+	}
+
+}
+
+func DoneChannel() {
+	done := make(chan struct{})
+	go func() {
+		for {
+			select {
+			case <-done:
+				fmt.Println("Signal Received Exit GoRoutine")
+				return
+			default:
+				fmt.Println("Wating For End")
+				time.Sleep(400 * time.Millisecond)
+			}
+		}
+	}()
+
+	time.Sleep(5 * time.Second)
+	fmt.Println("Close Channel ...")
+	close(done)
+
+	time.Sleep(100 * time.Millisecond)
+	fmt.Println("End Process")
 }
