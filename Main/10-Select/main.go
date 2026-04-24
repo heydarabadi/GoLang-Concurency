@@ -13,7 +13,9 @@ func main() {
 	//UseContextForManageOperation()
 	//MainForFanIn()
 	//MainForFanOut()
-	MainForTee()
+	//MainForTee()
+	//MainForBridge()
+	//MainForMultiplex()
 }
 
 func NonBlockingSelect() {
@@ -173,4 +175,120 @@ func MainForTee() {
 
 	time.Sleep(15 * time.Second)
 
+}
+
+// Bridge
+
+func bridge(channels <-chan <-chan int) <-chan int {
+	out := make(chan int)
+
+	go func() {
+		defer close(out)
+
+		for ch := range channels {
+			for v := range ch {
+				out <- v
+			}
+		}
+	}()
+
+	return out
+}
+
+func MainForBridge() {
+	channels := make(chan (<-chan int))
+
+	go func() {
+		defer close(channels)
+
+		a := make(chan int)
+		go func() {
+			defer close(a)
+			a <- 1
+			a <- 2
+		}()
+
+		b := make(chan int)
+		go func() {
+			defer close(b)
+			b <- 3
+			b <- 4
+		}()
+
+		channels <- a
+		channels <- b
+	}()
+
+	for v := range bridge(channels) {
+		fmt.Println(v)
+	}
+}
+
+// Multiplex
+
+func multiplex(a, b <-chan int) <-chan int {
+	out := make(chan int)
+
+	go func() {
+		defer close(out)
+
+		for a != nil || b != nil {
+			select {
+			case v, ok := <-a:
+				if !ok {
+					a = nil
+					continue
+				}
+				out <- v
+
+			case v, ok := <-b:
+				if !ok {
+					b = nil
+					continue
+				}
+				out <- v
+			}
+		}
+	}()
+
+	return out
+}
+
+func MainForMultiplex() {
+	a := make(chan int)
+	b := make(chan int)
+
+	go func() {
+		defer close(a)
+		a <- 1
+		a <- 2
+	}()
+
+	go func() {
+		defer close(b)
+		b <- 3
+		b <- 4
+	}()
+
+	for v := range multiplex(a, b) {
+		fmt.Println(v)
+	}
+}
+
+// مدیریت Backpressure با Buffer
+
+func Backpressure() {
+	ch := make(chan int, 2)
+	go func() {
+		for i := 1; i <= 5; i++ {
+			fmt.Println("Send:", i)
+			ch <- i
+		}
+		close(ch)
+	}()
+
+	for v := range ch {
+		time.Sleep(time.Second * 1)
+		fmt.Println("Recv:", v)
+	}
 }
